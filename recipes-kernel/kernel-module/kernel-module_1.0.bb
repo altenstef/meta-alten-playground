@@ -6,4 +6,6 @@ inherit module
 
 SRC_URI = "git://github.com/altenstef/kernel-module.git;branch=${PV};protocol=https"
 
-S = "${WORKDIR}"
+SRCREV="${AUTOREV}"
+
+S = "${WORKDIR}/git"
