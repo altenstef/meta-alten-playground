@@ -15,4 +15,4 @@ IMAGE_INSTALL_append = " kernel-module"
 IMAGE_FEATURES += "dev-pkgs"
 
 
-
+EXTRA_IMAGE_FEATURES ?= "debug-tweaks ssh-server-openssh"
