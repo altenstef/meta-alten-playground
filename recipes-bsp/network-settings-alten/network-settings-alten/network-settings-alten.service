@@ -1,0 +1,14 @@
+[Unit]
+Description=Alten Simple Network Initialization
+After=systemd-resolved.service connman.service
+
+[Service]
+Type=simple
+PIDFile=/run/network-init.pid
+ExecStart=/usr/sbin/rc.network start
+
+[Install]
+WantedBy=multi-user.target
+Also=systemd-networkd-wait-online.service
+Also=systemd-networkd.service
+Also=systemd-random-seed.service

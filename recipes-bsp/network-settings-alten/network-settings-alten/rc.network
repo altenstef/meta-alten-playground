@@ -1,0 +1,76 @@
+#!/bin/sh
+#@Copyright     Copyright (c) Imagination Technologies Ltd. All Rights Reserved
+#@License       MIT
+# The contents of this file are subject to the MIT license as set out below.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+NETWORK_IF="eth0"
+NETWORK_IP="192.168.2.1"
+NETMASK_IP="255.255.255.0"
+BROADCAST="192.168.2.255"
+
+start_network()
+{
+	# Start and configure Network interface
+	#
+    if ! /sbin/ifconfig $NETWORK_IF $NETWORK_IP netmask $NETMASK_IP broadcast $BROADCAST; then
+		echo "Failed to configure interface."
+        return 1;
+    fi
+
+	echo "Configured Network Interface $NETWORK_IF: $NETWORK_IP"
+	return 0;
+}
+
+stop_network()
+{
+	# Stop Network functionality
+	#
+    if ! /sbin/ifdown $NETWORK_IF; then
+        echo "Failed to stop the network interface"
+        return 1;
+    fi;
+	echo "Simple stop network succeeded."
+	return 0;
+}
+
+# Deal with the type of invocation we get.
+#
+case "$1" in
+"start")
+	start_network
+	;;
+stop)
+	if ! stop_network; then
+		echo "Couldn't stop network" >&2;
+	fi
+	;;
+reload|restart)
+	if stop_network; then
+		start_network
+	else
+		echo "Couldn't start network" >&2;
+	fi
+	;;
+*)
+	echo "$0: unknown argument $1." >&2;
+	;;
+esac
+
